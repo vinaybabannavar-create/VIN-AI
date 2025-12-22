@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+openai
+firebase-admin
+pymongo
+python-multipart
+requests
+google-generativeai
+gunicorn

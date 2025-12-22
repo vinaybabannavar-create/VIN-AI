@@ -1,0 +1,11 @@
+Testing key: AIzaSyA28vYPdW67t3gqFg7wl8rCqLuBhF6fkts
+
+--- Testing gemini-1.5-flash ---
+FAILURE with gemini-1.5-flash: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+
+--- Testing gemini-1.5-flash-latest ---
+FAILURE with gemini-1.5-flash-latest: 404 models/gemini-1.5-flash-latest is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+
+--- Testing gemini-flash-latest ---
+SUCCESS with gemini-flash-latest!
+Hi there! How can I help you today?
