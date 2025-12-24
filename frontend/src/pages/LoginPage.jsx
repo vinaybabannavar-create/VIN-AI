@@ -13,14 +13,27 @@ export default function LoginPage() {
 
     // Simulate API call
     setTimeout(() => {
-      const registeredUser = JSON.parse(localStorage.getItem('registeredUser'))
-      if (registeredUser && registeredUser.email === formData.email && registeredUser.password === formData.password) {
-        localStorage.setItem('user', JSON.stringify({ displayName: registeredUser.username, email: registeredUser.email }))
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]')
+      const legacyUser = JSON.parse(localStorage.getItem('registeredUser'))
+
+      // 1. Check in multi-user array
+      const userMatch = registeredUsers.find(u => u.email === formData.email && u.password === formData.password)
+
+      if (userMatch) {
+        localStorage.setItem('user', JSON.stringify({ displayName: userMatch.username, email: userMatch.email }))
         navigate('/dashboard')
-      } else if (formData.email === 'vinay@example.com' && formData.password === 'password') {
+      }
+      // 2. Check legacy single user
+      else if (legacyUser && legacyUser.email === formData.email && legacyUser.password === formData.password) {
+        localStorage.setItem('user', JSON.stringify({ displayName: legacyUser.username, email: legacyUser.email }))
+        navigate('/dashboard')
+      }
+      // 3. Check hardcoded demo user
+      else if (formData.email === 'vinay@example.com' && formData.password === 'password') {
         localStorage.setItem('user', JSON.stringify({ displayName: 'Vinay B', email: 'vinay@example.com' }))
         navigate('/dashboard')
-      } else {
+      }
+      else {
         alert('Invalid credentials')
       }
       setLoading(false)

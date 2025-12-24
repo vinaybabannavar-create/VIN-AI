@@ -298,7 +298,7 @@ export default function Chat() {
                 {currentChat?.title === 'New Conversation' ? 'AI Assistant' : currentChat?.title}
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </h1>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Model: Gemini 1.5 Flash (Free Tier)</p>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Model : VIN AI 7.0</p>
             </div>
           </div>
 

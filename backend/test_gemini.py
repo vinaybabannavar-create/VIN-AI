@@ -6,7 +6,7 @@ load_dotenv()
 key = os.getenv('GEMINI_API_KEY')
 
 with open('debug_gemini.log', 'w') as f:
-    f.write(f"Testing key: {key}\n") # Write full key for debugging if needed, though usually not recommended. Here it's for troubleshooting.
+    f.write(f"Testing key starts with: {key[:5]}...\n") 
     genai.configure(api_key=key)
     
     test_models = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-flash-latest', 'gemini-2.0-flash', 'gemini-pro']

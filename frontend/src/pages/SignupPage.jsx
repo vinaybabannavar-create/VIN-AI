@@ -12,7 +12,23 @@ export default function SignupPage() {
     setLoading(true)
 
     setTimeout(() => {
+      // Get existing users or initialize empty array
+      const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]')
+
+      // Check if email already exists
+      if (existingUsers.find(u => u.email === formData.email)) {
+        alert('An account with this email already exists!')
+        setLoading(false)
+        return
+      }
+
+      // Add new user
+      const updatedUsers = [...existingUsers, formData]
+      localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers))
+
+      // Keep legacy support for single user if needed for other parts of the app
       localStorage.setItem('registeredUser', JSON.stringify(formData))
+
       alert('Account created successfully! Please login.')
       navigate('/')
       setLoading(false)
@@ -30,7 +46,7 @@ export default function SignupPage() {
         <div className="flex-1 space-y-8 text-center lg:text-left">
           <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl animate-fade-in">
             <Zap className="w-4 h-4 text-purple-400" />
-            <span className="text-xs font-black uppercase tracking-[0.2em] text-purple-400">Join the Future of Work</span>
+            <span className="text-xs font-black uppercase tracking-[0.2em] text-purple-400">VIN AI</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-tight animate-fade-in" style={{ animationDelay: '100ms' }}>
             Start Your <br />
