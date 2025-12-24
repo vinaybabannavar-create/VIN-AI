@@ -9,6 +9,7 @@ export default function Resume() {
   const navigate = useNavigate()
   const resumeRef = useRef()
   const [activeSection, setActiveSection] = useState('personal')
+  const [isDownloading, setIsDownloading] = useState(false)
   const [resume, setResume] = useState({
     personal: { name: '', email: '', phone: '', linkedin: '' },
     summary: '',
@@ -111,15 +112,51 @@ export default function Resume() {
   }
 
   const downloadPDF = async () => {
-    const element = resumeRef.current
-    const canvas = await html2canvas(element, { scale: 2 })
-    const imgData = canvas.toDataURL('image/png')
-    const pdf = new jsPDF('p', 'mm', 'a4')
-    const imgProps = pdf.getImageProperties(imgData)
-    const pdfWidth = pdf.internal.pageSize.getWidth()
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
-    pdf.save(`${resume.personal.name}_Resume.pdf`)
+    if (!resumeRef.current) {
+      alert('Resume preview not ready. Please try again.')
+      return
+    }
+
+    setIsDownloading(true)
+
+    try {
+      const element = resumeRef.current
+
+      // Configure html2canvas for better mobile support
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight
+      })
+
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const imgProps = pdf.getImageProperties(imgData)
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+
+      // Fallback filename if name is empty
+      const filename = resume.personal.name ? `${resume.personal.name}_Resume.pdf` : 'My_Resume.pdf'
+      pdf.save(filename)
+
+    } catch (error) {
+      console.error('PDF generation failed:', error)
+
+      // Fallback to print dialog
+      setIsDownloading(false)
+      if (confirm('Direct PDF download failed. Would you like to use Print to PDF instead?\\n\\nClick OK, then choose "Save as PDF" in the print dialog.')) {
+        window.print()
+      }
+      return
+    } finally {
+      setIsDownloading(false)
+    }
   }
 
   return (
@@ -142,9 +179,20 @@ export default function Resume() {
           </div>
           <button
             onClick={downloadPDF}
-            className="flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg md:rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-blue-600/20 font-black text-[10px] md:text-sm uppercase tracking-widest"
+            disabled={isDownloading}
+            className="flex items-center gap-2 px-4 md:px-6 py-2 rounded-lg md:rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-blue-600/20 font-black text-[10px] md:text-sm uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Download className="w-4 h-4 md:w-5 md:h-5" /> <span className="hidden sm:inline">Export PDF</span><span className="sm:hidden">PDF</span>
+            {isDownloading ? (
+              <>
+                <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="hidden sm:inline">Generating...</span><span className="sm:hidden">...</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="hidden sm:inline">Export PDF</span><span className="sm:hidden">PDF</span>
+              </>
+            )}
           </button>
         </header>
 
@@ -278,7 +326,7 @@ export default function Resume() {
           <div className="hidden lg:flex flex-1 p-8 bg-black/30 overflow-y-auto justify-center items-start scrollbar-thin scrollbar-thumb-slate-700">
             <div
               ref={resumeRef}
-              className="bg-white text-slate-900 w-[210mm] min-h-[297mm] p-12 shadow-2xl transition-all duration-300 transform scale-[0.85] origin-top"
+              className="resume-preview bg-white text-slate-900 w-[210mm] min-h-[297mm] p-12 shadow-2xl transition-all duration-300 transform scale-[0.85] origin-top"
             >
               {/* Preview Content */}
               <div className="border-b-4 border-slate-900 pb-8 mb-8 flex justify-between items-end">
