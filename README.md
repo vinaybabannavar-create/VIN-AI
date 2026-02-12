@@ -1,4 +1,6 @@
-# AI Career Platform (Simple Starter)
+# AI Career Platform
+
+Demo link: https://vin-ai-orpin.vercel.app/
 
 This repo contains a starter AI Career Platform:
 - Backend: FastAPI (OpenAI integration)
